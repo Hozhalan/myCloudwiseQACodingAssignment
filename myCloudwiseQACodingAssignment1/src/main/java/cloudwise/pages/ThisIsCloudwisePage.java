@@ -9,33 +9,37 @@ import org.openqa.selenium.support.How;
 import utils.BasePage;
 
 public class ThisIsCloudwisePage extends BasePage {
-    @FindBy(how = How.XPATH, using = "//h2[text()='Ontdek Cloudwise']")
-    public WebElement titleDiscoverCloudwise;
-    //@FindBy(how = How.XPATH, using = "//*[@id='core-features']//div[1]/div/h3[text()='Alle Cloudwisers']")
-    @FindBy(how = How.XPATH, using = "//*[@id='core-features']/div[2]/div/div/div/div/div[1]/div/div[1]/div/div")
-    public WebElement txtAllCloudWisers;
-    @FindBy(how = How.XPATH, using = "//*[@id='core-features']/div[2]/div/div/div/div/div[1]/div/div[1]//div/a")
-    public WebElement btnAllCloudwisers;
-    @FindBy(how = How.XPATH, using = "//*[@id='core-features']/div[2]/div/div/div/div/div[1]/div/div[1]/div/div/div[1]")
-    public WebElement performFlip;
+  private static ThisIsCloudwisePage instance;
 
-    private Actions actions;
+  @FindBy(how = How.XPATH, using = "//*[@id='core-features']/div[2]//div[1]/div/div[1]/div/div")
+  public WebElement txtAllCloudWisers;
 
-    public ThisIsCloudwisePage(WebDriver driver) throws InterruptedException {
-        super(driver);
-        this.webDriver = driver;
-    }
+  @FindBy(how = How.XPATH, using = "//*[@id='core-features']/div[2]//div[1]/div/div[1]//div/a")
+  public WebElement btnAllCloudwisers;
 
-    public ThisIsCloudwisePage scrollPageToDiscoverCloudwise() {
-        actions = new Actions(webDriver);
-        actions.moveToElement(txtAllCloudWisers).perform();
-        return this;
-    }
+  private ThisIsCloudwisePage(WebDriver driver) {
+    super(driver);
+    this.webDriver = driver;
+  }
 
-    public AllCloudwisersPage clickPageToAllCloudWisers() throws InterruptedException {
-        JavascriptExecutor js = (JavascriptExecutor) webDriver;
-        js.executeScript("arguments[0].click();", btnAllCloudwisers);
-        return new AllCloudwisersPage(webDriver);
-    }
+  public static ThisIsCloudwisePage construct(WebDriver driver) {
+    instance = new ThisIsCloudwisePage(driver);
+    return instance;
+  }
 
+  public static ThisIsCloudwisePage getInstance() {
+    return instance;
+  }
+
+  public ThisIsCloudwisePage scrollPageToDiscoverCloudwise() {
+    Actions actions = new Actions(webDriver);
+    actions.moveToElement(txtAllCloudWisers).perform();
+    return this;
+  }
+
+  public void clickPageToAllCloudWisers() {
+    JavascriptExecutor js = (JavascriptExecutor) webDriver;
+    js.executeScript("arguments[0].click();", btnAllCloudwisers);
+    AllCloudwisersPage.construct(webDriver);
+  }
 }

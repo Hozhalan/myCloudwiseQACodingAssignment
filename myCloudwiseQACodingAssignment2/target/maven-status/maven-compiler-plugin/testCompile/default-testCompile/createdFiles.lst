@@ -1,0 +1,6 @@
+steps\StepDefinitionForSecondTestScenario.class
+base\Runner.class
+steps\BasicStepDefinition.class
+steps\StepDefinitionForThirdTestScenario.class
+steps\StepDefinitionForFirstTestScenario.class
+steps\StepDefinitionForFourthTestScenario.class

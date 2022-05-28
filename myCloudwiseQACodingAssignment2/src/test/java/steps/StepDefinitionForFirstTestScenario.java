@@ -3,63 +3,65 @@ package steps;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.Assert;
 import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
-import utils.WebDriverLibrary;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
-import java.util.concurrent.TimeUnit;
+import java.time.Duration;
 
-public class StepDefinitionForFirstTestScenario {
+import static utils.PathValues.TXT_BOX_FIRST;
+import static utils.PathValues.TXT_BOX_OUTPUT_VALUE;
+import static utils.PathValues.TXT_BOX_POINT_FIRST;
+import static utils.PathValues.TXT_BOX_POINT_SECOND;
+import static utils.PathValues.TXT_BOX_SECOND;
 
-    private final String pointFirstTxtBox = "//div[1]/div[2]/div/mat-form-field[1]";
-    private final String pointSecondTxtBox = "//div[1]/div[2]/div/mat-form-field[2]";
-    private final String firstTxtBox = "//*[@id='mat-input-0']";
-    private final String secondTxtBox = "//*[@id='mat-input-1']";
-    private final String outputValue = "//*[@id='mat-input-2']";
-    WebDriver webDriver;
-    String route = "https://gatekeeper.codeshake.dev/test";
-    private int total = 0;
+@Slf4j
+public class StepDefinitionForFirstTestScenario extends BasicStepDefinition {
 
-    public StepDefinitionForFirstTestScenario() throws InterruptedException {
-        super();
-    }
+  private int total = 0;
 
-    @Given("open cloudwise webpage for first test scenario")
-    public void open_cloudwise_webpage() throws InterruptedException {
-        webDriver = WebDriverLibrary.getChromeDriver();
-        webDriver.navigate().to(route);
-        webDriver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
-    }
+  public StepDefinitionForFirstTestScenario() throws InterruptedException {
+    super();
+  }
 
-    @And("enter the first value as {string}")
-    public void enter_the_first_value(String firstValue) {
-        int firstValuePoint = Integer.parseInt(firstValue);
-        total = total + firstValuePoint;
-        webDriver.findElement(By.xpath(pointFirstTxtBox)).click();
-        webDriver.findElement(By.xpath(firstTxtBox)).sendKeys(firstValue);
-    }
+  @Given("open gatekeeper webpage for first test scenario")
+  public void open_gatekeeper_webpage() throws InterruptedException {
+    log.info("open gatekeeper webpage for first test scenario");
+    openGatekeeperWebpage();
+  }
 
-    @And("enter the second value as {string}")
-    public void enter_the_second_value(String secondValue) {
-        int secondValuePoint = Integer.parseInt(secondValue);
-        total = total + secondValuePoint;
-        webDriver.findElement(By.xpath(pointSecondTxtBox)).click();
-        webDriver.findElement(By.xpath(secondTxtBox)).sendKeys(secondValue);
-        webDriver.findElement(By.xpath(secondTxtBox)).getText();
-    }
+  @And("enter the first value as {string}")
+  public void enter_the_first_value(String firstValue) {
+    enterTheValue(firstValue, TXT_BOX_POINT_FIRST, TXT_BOX_FIRST);
+  }
 
-    @Then("verify the total value")
-    public void verify_the_total_value() {
-        String actualOutput = webDriver.findElement(By.xpath(outputValue)).getAttribute("value");
-        String expectedOutput = Integer.toString(total);
-        Assert.assertEquals(expectedOutput, actualOutput);
-    }
+  @And("enter the second value as {string}")
+  public void enter_the_second_value(String secondValue) {
+    enterTheValue(secondValue, TXT_BOX_POINT_SECOND, TXT_BOX_SECOND);
+  }
 
-    @Then("close cloudwise webpage for first test scenario")
-    public void close_cloudwise_webpage() {
-        webDriver.quit();
-    }
+  public void enterTheValue(String value, String txtBoxPath, String txtBox) {
+    wait = new WebDriverWait(webDriver, Duration.ofSeconds(GLOBAL_TIMEOUT));
+    int secondValuePoint = Integer.parseInt(value);
+    total = total + secondValuePoint;
+    wait.until(ExpectedConditions.elementToBeClickable(By.xpath(txtBoxPath)));
+    webDriver.findElement(By.xpath(txtBoxPath)).click();
+    webDriver.findElement(By.xpath(txtBox)).sendKeys(value);
+  }
 
+  @Then("verify the total value")
+  public void verify_the_total_value() {
+    String actualOutput =
+        webDriver.findElement(By.xpath(TXT_BOX_OUTPUT_VALUE)).getAttribute("value");
+    String expectedOutput = Integer.toString(total);
+    Assert.assertEquals(expectedOutput, actualOutput);
+  }
 
+  @Then("close gatekeeper webpage for first test scenario")
+  public void close_gatekeeper_webpage() {
+    log.info("Close gatekeeper webpage for first test scenario");
+    closeGatekeeperWebpage();
+  }
 }

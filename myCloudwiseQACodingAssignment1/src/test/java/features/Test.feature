@@ -8,4 +8,5 @@ Feature: Verifying the test flow
     And go to 'All cloudwisers'
     And go into all the departments
     And get all the user details
+    Then close cloudwise webpage
 

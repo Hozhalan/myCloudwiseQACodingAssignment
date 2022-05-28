@@ -19,203 +19,115 @@ import org.openqa.selenium.support.How;
 import utils.BasePage;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
+import java.util.function.Supplier;
 
 public class AllCloudwisersPage extends BasePage {
 
-    private final String updatedFindDepartments = "//../../../div[2]/div/a";
-    private final List<String> departmentList = new ArrayList<>();
-    @FindBy(how = How.XPATH, using = "//div[1]/div/h3")
-    public List<WebElement> txtDepartments;
-    @FindBy(how = How.XPATH, using = "//div[2]/div[2]/div/div/div/div[1]/div/h3")
-    public WebElement txtDepartment;
-    JavascriptExecutor js = (JavascriptExecutor) webDriver;
-    Actions actions = new Actions(webDriver);
-    private List<String> managementUserRecords;
-    private List<String> supportUserRecords;
-    private List<String> projectsAndSupportUserRecords;
-    private List<String> salesUserRecords;
-    private List<String> marketingUserRecords;
-    private List<String> academyUserRecords;
-    private List<String> developmentPageUserRecords;
-    private List<String> administrationUserRecords;
-    private List<String> warehouseUserRecords;
+  private static AllCloudwisersPage instance;
+  private final List<String> departmentList = new ArrayList<>();
 
-    private WebElement departmentPath;
-    private String findDepartmentPath;
+  @FindBy(how = How.XPATH, using = "//div[1]/div/h3")
+  public List<WebElement> txtDepartments;
 
-    public AllCloudwisersPage(WebDriver driver) throws InterruptedException {
-        super(driver);
-        this.webDriver = driver;
+  @FindBy(how = How.XPATH, using = "//div[2]/div[2]/div/div/div/div[1]/div/h3")
+  public WebElement txtDepartment;
+
+  JavascriptExecutor js = (JavascriptExecutor) webDriver;
+  Actions actions = new Actions(webDriver);
+
+  private AllCloudwisersPage(WebDriver driver) {
+    super(driver);
+    this.webDriver = driver;
+  }
+
+  public static AllCloudwisersPage construct(WebDriver driver) {
+    instance = new AllCloudwisersPage(driver);
+    return instance;
+  }
+
+  public static AllCloudwisersPage getInstance() {
+    return instance;
+  }
+
+  public List<String> scrollPageToAllCloudWisers() throws InterruptedException {
+
+    for (WebElement findDepartment : txtDepartments) {
+      String departmentName = findDepartment.getText();
+      departmentList.add(departmentName);
     }
 
-    public List<String> scrollPageToAllCloudWisers() throws InterruptedException {
+    for (String findDepartmentName : departmentList) {
 
-        for (WebElement findDepartment : txtDepartments) {
-            String departmentName = findDepartment.getText();
-            departmentList.add(departmentName);
-        }
+      String UpdateFindDepartmentName = "//../h3[text()='" + findDepartmentName + "']";
+      String updatedFindDepartments = "//../../../div[2]/div/a";
+      WebElement findDepartment = txtDepartment.findElement(By.xpath(UpdateFindDepartmentName));
+      actions.moveToElement(findDepartment).perform();
+      switch (findDepartmentName) {
+        case "Directie":
+          String findDepartmentPath = UpdateFindDepartmentName.concat(updatedFindDepartments);
+          totalUserDetails.addAll(
+              goIntoPage(findDepartmentPath, () -> new ManagementPage(webDriver)));
 
-        for (String findDepartmentName : departmentList) {
+          break;
+        case "Support":
+          findDepartmentPath = UpdateFindDepartmentName.concat(updatedFindDepartments);
+          totalUserDetails.addAll(goIntoPage(findDepartmentPath, () -> new SupportPage(webDriver)));
 
-            String UpdateFindDepartmentName = "//../h3[text()='" + findDepartmentName + "']";
-            WebElement findDepartment = txtDepartment.findElement(By.xpath(UpdateFindDepartmentName));
-            actions.moveToElement(findDepartment).perform();
+          break;
+        case "Projecten & Support":
+          findDepartmentPath = UpdateFindDepartmentName.concat(updatedFindDepartments);
+          totalUserDetails.addAll(
+              goIntoPage(findDepartmentPath, () -> new ProjectsAndSupportPage(webDriver)));
 
-            if (findDepartmentName.equals("Directie")) {
-                findDepartmentPath = UpdateFindDepartmentName.concat(updatedFindDepartments);
-                goIntoManagementPage(findDepartmentPath);
+          break;
+        case "Sales":
+          findDepartmentPath = UpdateFindDepartmentName.concat(updatedFindDepartments);
+          totalUserDetails.addAll(goIntoPage(findDepartmentPath, () -> new SalesPage(webDriver)));
 
-            } else if (findDepartmentName.equals("Support")) {
-                findDepartmentPath = UpdateFindDepartmentName.concat(updatedFindDepartments);
-                goIntoSupportPage(findDepartmentPath);
+          break;
+        case "Marketing":
+          findDepartmentPath = UpdateFindDepartmentName.concat(updatedFindDepartments);
+          totalUserDetails.addAll(
+              goIntoPage(findDepartmentPath, () -> new MarketingPage(webDriver)));
 
-            } else if (findDepartmentName.equals("Projecten & Support")) {
-                findDepartmentPath = UpdateFindDepartmentName.concat(updatedFindDepartments);
-                goIntoProjectsAndSupportPage(findDepartmentPath);
+          break;
+        case "Academy":
+          findDepartmentPath = UpdateFindDepartmentName.concat(updatedFindDepartments);
+          totalUserDetails.addAll(goIntoPage(findDepartmentPath, () -> new AcademyPage(webDriver)));
 
-            } else if (findDepartmentName.equals("Sales")) {
-                findDepartmentPath = UpdateFindDepartmentName.concat(updatedFindDepartments);
-                goIntoSalesPage(findDepartmentPath);
+          break;
+        case "Development":
+          findDepartmentPath = UpdateFindDepartmentName.concat(updatedFindDepartments);
+          totalUserDetails.addAll(
+              goIntoPage(findDepartmentPath, () -> new DevelopmentPage(webDriver)));
 
-            } else if (findDepartmentName.equals("Marketing")) {
-                findDepartmentPath = UpdateFindDepartmentName.concat(updatedFindDepartments);
-                goIntoMarketingPage(findDepartmentPath);
+          break;
+        case "HR & Administratie":
+          findDepartmentPath = UpdateFindDepartmentName.concat(updatedFindDepartments);
+          totalUserDetails.addAll(
+              goIntoPage(findDepartmentPath, () -> new HRAndAdministrationPage(webDriver)));
 
-            } else if (findDepartmentName.equals("Academy")) {
-                findDepartmentPath = UpdateFindDepartmentName.concat(updatedFindDepartments);
-                goIntoAcademyPage(findDepartmentPath);
-
-            } else if (findDepartmentName.equals("Development")) {
-                findDepartmentPath = UpdateFindDepartmentName.concat(updatedFindDepartments);
-                goIntoDevelopmentPage(findDepartmentPath);
-
-            } else if (findDepartmentName.equals("HR & Administratie")) {
-                findDepartmentPath = UpdateFindDepartmentName.concat(updatedFindDepartments);
-                goIntoHRAndAdministrationPage(findDepartmentPath);
-
-            } else if (findDepartmentName.equals("Logistiek & Service")) {
-                findDepartmentPath = UpdateFindDepartmentName.concat(updatedFindDepartments);
-                goIntoWarehousePage(findDepartmentPath);
-            }
-        }
-
-        return totalUserDetails;
-
+          break;
+        case "Logistiek & Service":
+          findDepartmentPath = UpdateFindDepartmentName.concat(updatedFindDepartments);
+          totalUserDetails.addAll(
+              goIntoPage(findDepartmentPath, () -> new WarehousePage(webDriver)));
+          break;
+        default:
+          throw new IllegalStateException("Unexpected value: " + findDepartmentName);
+      }
     }
 
-    //Department1
-    public List<String> goIntoAcademyPage(String btnFindDepartment) throws InterruptedException {
-        departmentPath = webDriver.findElement(By.xpath(btnFindDepartment));
-        js.executeScript("arguments[0].click();", departmentPath);
-        AcademyPage academyPage = new AcademyPage(webDriver);
-        academyUserRecords = academyPage.getEmployeeRecords();
-        webDriver.navigate().back();
-        totalUserDetails.addAll(academyUserRecords);
-        return academyUserRecords;
-    }
+    return totalUserDetails;
+  }
 
-    //Department2
-    public List<String> goIntoDevelopmentPage(String btnFindDepartment) throws InterruptedException {
-        departmentPath = webDriver.findElement(By.xpath(btnFindDepartment));
-        js.executeScript("arguments[0].click();", departmentPath);
-        DevelopmentPage developmentPage = new DevelopmentPage(webDriver);
-        developmentPageUserRecords = developmentPage.getEmployeeRecords();
-        webDriver.navigate().back();
-        totalUserDetails.addAll(developmentPageUserRecords);
-        return developmentPageUserRecords;
-    }
-
-    //Department3
-    public List<String> goIntoHRAndAdministrationPage(String btnFindDepartment) throws InterruptedException {
-        departmentPath = webDriver.findElement(By.xpath(btnFindDepartment));
-        js.executeScript("arguments[0].click();", departmentPath);
-        HRAndAdministrationPage hrAndAdministrationPage = new HRAndAdministrationPage(webDriver);
-        administrationUserRecords = hrAndAdministrationPage.getEmployeeRecords();
-        webDriver.navigate().back();
-        totalUserDetails.addAll(administrationUserRecords);
-        return administrationUserRecords;
-    }
-
-    //Department4
-    public List<String> goIntoManagementPage(String btnFindDepartment) throws InterruptedException {
-        departmentPath = webDriver.findElement(By.xpath(btnFindDepartment));
-        js.executeScript("arguments[0].click();", departmentPath);
-        ManagementPage managementPage = new ManagementPage(webDriver);
-        managementUserRecords = managementPage.getEmployeeRecords();
-        webDriver.navigate().back();
-        totalUserDetails.addAll(managementUserRecords);
-        return managementUserRecords;
-
-    }
-
-    //Department5
-    public List<String> goIntoMarketingPage(String btnFindDepartment) throws InterruptedException {
-        departmentPath = webDriver.findElement(By.xpath(btnFindDepartment));
-        js.executeScript("arguments[0].click();", departmentPath);
-        MarketingPage marketingPage = new MarketingPage(webDriver);
-        marketingUserRecords = marketingPage.getEmployeeRecords();
-        webDriver.navigate().back();
-        totalUserDetails.addAll(marketingUserRecords);
-        return marketingUserRecords;
-    }
-
-    //Department6
-    public List<String> goIntoProjectsAndSupportPage(String btnFindDepartment) throws InterruptedException {
-        departmentPath = webDriver.findElement(By.xpath(btnFindDepartment));
-        js.executeScript("arguments[0].click();", departmentPath);
-        ProjectsAndSupportPage projectsAndSupportPage = new ProjectsAndSupportPage(webDriver);
-        projectsAndSupportUserRecords = projectsAndSupportPage.getEmployeeRecords();
-        webDriver.navigate().back();
-        totalUserDetails.addAll(projectsAndSupportUserRecords);
-        return projectsAndSupportUserRecords;
-    }
-
-    //Department7
-    public List<String> goIntoSalesPage(String btnFindDepartment) throws InterruptedException {
-        departmentPath = webDriver.findElement(By.xpath(btnFindDepartment));
-        js.executeScript("arguments[0].click();", departmentPath);
-        SalesPage salesPage = new SalesPage(webDriver);
-        salesUserRecords = salesPage.getEmployeeRecords();
-        webDriver.navigate().back();
-        totalUserDetails.addAll(salesUserRecords);
-        return salesUserRecords;
-    }
-
-    //Department8
-    public List<String> goIntoSupportPage(String btnFindDepartment) throws InterruptedException {
-        departmentPath = webDriver.findElement(By.xpath(btnFindDepartment));
-        js.executeScript("arguments[0].click();", departmentPath);
-        SupportPage supportPage = new SupportPage(webDriver);
-        supportUserRecords = supportPage.getEmployeeRecords();
-        webDriver.navigate().back();
-        totalUserDetails.addAll(supportUserRecords);
-        return supportUserRecords;
-    }
-
-    //Department9
-    public List<String> goIntoWarehousePage(String btnFindDepartment) throws InterruptedException {
-        departmentPath = webDriver.findElement(By.xpath(btnFindDepartment));
-        js.executeScript("arguments[0].click();", departmentPath);
-        WarehousePage WarehousePage = new WarehousePage(webDriver);
-        warehouseUserRecords = WarehousePage.getEmployeeRecords();
-        webDriver.navigate().back();
-        totalUserDetails.addAll(warehouseUserRecords);
-        return warehouseUserRecords;
-    }
-
-    public void findDuplicate() throws InterruptedException {
-
-        Set<String> set = new HashSet<>();
-        for (int i = 0; i < totalUserDetails.size(); i++) {
-            if (set.contains(totalUserDetails.get(i))) {
-                System.out.println(totalUserDetails.get(i) + " is duplicated");
-            } else set.add(totalUserDetails.get(i));
-        }
-    }
-
-
+  public List<String> goIntoPage(String btnFindDepartment, Supplier<BasePage> pageSupplier)
+      throws InterruptedException {
+    WebElement pathElement = webDriver.findElement(By.xpath(btnFindDepartment));
+    js.executeScript("arguments[0].click();", pathElement);
+    List<String> userRecords = pageSupplier.get().getEmployeeRecords();
+    webDriver.navigate().back();
+    return userRecords;
+  }
 }
-
