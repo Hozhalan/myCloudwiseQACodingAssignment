@@ -1,0 +1,14 @@
+cloudwise\pages\Departments\HRAndAdministrationPage.class
+cloudwise\pages\Departments\ManagementPage.class
+cloudwise\pages\ThisIsCloudwisePage.class
+utils\WebDriverLibrary.class
+cloudwise\pages\Departments\ProjectsAndSupportPage.class
+cloudwise\pages\Departments\MarketingPage.class
+cloudwise\pages\Departments\WarehousePage.class
+cloudwise\pages\Departments\DevelopmentPage.class
+utils\BasePage.class
+cloudwise\pages\AllCloudwisersPage.class
+cloudwise\panels\CWMainMenu.class
+cloudwise\pages\Departments\AcademyPage.class
+cloudwise\pages\Departments\SalesPage.class
+cloudwise\pages\Departments\SupportPage.class
